@@ -25,7 +25,8 @@ dfresultat = hiveContext.createDataFrame(result)
 dfresultat.registerTempTable("resultat")
 
 #requete
-resultat = hiveContext.sql("SELECT departement, Chomage2021T1, Chomage2021T2, Chomage2021T3, Chomage2021T4"
+resultat = hiveContext.sql("SELECT departement, Chomage2021T1, Chomage2021T2, Chomage2021T3, Chomage2021T4,"
+  " ROUND((Chomage2021T1 + Chomage2021T2 + Chomage2021T3 + Chomage2021T4) / 4, 2)  as PctChomage2021"
   " FROM resultat"
   " ORDER BY departement"
   ).show(dfresultat.count(), False)
