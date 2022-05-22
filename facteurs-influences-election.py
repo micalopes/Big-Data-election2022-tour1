@@ -30,16 +30,18 @@ parts3 = result_salaire_file_no_header.map(lambda l: l.split(";"))
 
 # SQL selection des colonnes
 election = parts1.map(lambda p: Row(ElecCodeDepartement=p[0], ElecNomDepartement=p[1],
-    PctVoteExpC1=p[27], PctVoteExpC2=p[34], PctVoteExpC3=p[41], PctVoteExpC4=p[48],
-    PctVoteExpC5=p[55], PctVoteExpC6=p[62], PctVoteExpC7=p[69], PctVoteExpC8=p[76],
-    PctVoteExpC9=p[83], PctVoteExpC10=p[90], PctVoteExpC11=p[97], PctVoteExpC12=p[104])
+    PctVoteExpC1=p[41], PctVoteExpC2=p[55], PctVoteExpC3=p[62], PctVoteExpC4=p[69],
+    PctVoteExpC5=p[83], PctVoteExpC6=p[90])
 )
 
 chomage = parts2.map(lambda p: Row(ChomageCodeDepartement=p[0], ChomageNomDepartement=p[1],
     Chomage2021T1=p[158], Chomage2021T2=p[159], Chomage2021T3=p[160], Chomage2021T4=p[161])
 )
 
-salaire = parts3.map(lambda p: Row(SalaireCodeDepartement=p[0], SalaireMoyenNetHor2018=p[1])
+salaire = parts3.map(lambda p: Row(SalaireCodeDepartement=p[0], SalaireMoyenNetHor2018=p[1],
+    SalaireMoyenNetHorCadreSup2018=p[2], SalaireMoyenNetHorProfInter2018=p[3], SalaireMoyenNetHorEmployees2018=p[4],
+    SalaireMoyenNetHorOuvrier2018=p[5], SalaireMoyenNetHor18a25Ans2018=p[16], SalaireMoyenNetHor26a50Ans2018=p[17],
+    SalaireMoyenNetHorPlus25Ans2018=p[18])
 )
 
 
@@ -58,26 +60,29 @@ dfResult.registerTempTable("electionInfluence")
 
 
 #requete
-#requete
 electionInfluence = hiveContext.sql("SELECT ElecNomDepartement as Departement,"
-    " ROUND(AVG(PctVoteExpC1), 2) as Arthaud,"
-    " ROUND(AVG(PctVoteExpC2), 2) as Roussel,"
-    " ROUND(AVG(PctVoteExpC3), 2) as Macron,"
-    " ROUND(AVG(PctVoteExpC4), 2) as Lassalle,"
-    " ROUND(AVG(PctVoteExpC5), 2) as Lepen,"
-    " ROUND(AVG(PctVoteExpC6), 2) as Zemmour,"
-    " ROUND(AVG(PctVoteExpC7), 2) as Melenchon,"
-    " ROUND(AVG(PctVoteExpC8), 2) as Hidalgo,"
-    " ROUND(AVG(PctVoteExpC9), 2) as Jadot,"
-    " ROUND(AVG(PctVoteExpC10), 2) as Pecresse,"
-    " ROUND(AVG(PctVoteExpC11), 2) as Poutou,"
-    " ROUND(AVG(PctVoteExpC12), 2) as DupontAignan,"
+    " ROUND(AVG(PctVoteExpC1), 2) as Macron,"
+    " ROUND(AVG(PctVoteExpC2), 2) as Lepen,"
+    " ROUND(AVG(PctVoteExpC3), 2) as Zemmour,"
+    " ROUND(AVG(PctVoteExpC4), 2) as Melenchon,"
+    " ROUND(AVG(PctVoteExpC5), 2) as Jadot,"
+    " ROUND(AVG(PctVoteExpC6), 2) as Pecresse,"
     " ROUND(((Chomage2021T1 + Chomage2021T2 + Chomage2021T3 + Chomage2021T4) / 4), 2) as MoyenneChomage2021,"
-    " ROUND(SalaireMoyenNetHor2018, 2) as SalaireHoraireMoyen"
+    " ROUND(SalaireMoyenNetHor2018, 2) as SHorMoy,"
+    " ROUND(SalaireMoyenNetHorCadreSup2018, 2) as SHorMoyCadreSup,"
+    " ROUND(SalaireMoyenNetHorProfInter2018, 2) as SalaireHorMoyProfInter,"
+    " ROUND(SalaireMoyenNetHorEmployees2018, 2) as SHorMoyEmploye,"
+    " ROUND(SalaireMoyenNetHorOuvrier2018, 2) as SHorMoyOuvrier,"
+    " ROUND(SalaireMoyenNetHor18a25Ans2018, 2) as SHorMoy18a25Ans,"
+    " ROUND(SalaireMoyenNetHor26a50Ans2018, 2) as SHorMoy26a50Ans,"
+    " ROUND(SalaireMoyenNetHorPlus25Ans2018, 2) as SHorMoyPlus25Ans"
     " FROM electionInfluence"
     " WHERE ElecCodeDepartement = 59 OR ElecCodeDepartement = 75 OR ElecCodeDepartement = 13 OR ElecCodeDepartement = 69"
         " OR ElecCodeDepartement = 92 OR ElecCodeDepartement = 93 OR ElecCodeDepartement = 33 OR ElecCodeDepartement = 62"
-        " OR ElecCodeDepartement = 78 OR ElecCodeDepartement = 77"
-    " GROUP BY ElecNomDepartement, Chomage2021T1, Chomage2021T2, Chomage2021T3, Chomage2021T4, SalaireMoyenNetHor2018"
-    " ORDER BY ElecNomDepartement"
+        " OR ElecCodeDepartement = 78 OR ElecCodeDepartement = 77 OR ElecCodeDepartement = 94 OR ElecCodeDepartement = 44"
+        " OR ElecCodeDepartement = 31 OR ElecCodeDepartement = 91 OR ElecCodeDepartement = 76"
+    " GROUP BY ElecNomDepartement, Chomage2021T1, Chomage2021T2, Chomage2021T3, Chomage2021T4, SalaireMoyenNetHor2018,"
+        " SalaireMoyenNetHorCadreSup2018, SalaireMoyenNetHorProfInter2018, SalaireMoyenNetHorEmployees2018, SalaireMoyenNetHorOuvrier2018,"
+        " SalaireMoyenNetHor18a25Ans2018, SalaireMoyenNetHor26a50Ans2018, SalaireMoyenNetHorPlus25Ans2018"
+    " ORDER BY MoyenneChomage2021 DESC"
 ).show(dfResult.count(), False)
